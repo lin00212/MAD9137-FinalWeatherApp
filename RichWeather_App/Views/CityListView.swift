@@ -1,15 +1,9 @@
-//
-//  CityListView.swift
-//  RichWeather_App
-//
-//  Created by Eason Lin on 13/12/2024.
-//
-
 import SwiftUI
 
 struct CityListView: View {
     @StateObject private var networkManager = NetworkManager()
     @AppStorage("isDarkModeEnabled") private var isDarkModeEnabled = false
+    @State private var isSearchViewPresented = false
 
     var body: some View {
         NavigationView {
@@ -35,21 +29,27 @@ struct CityListView: View {
                                 HStack {
                                     VStack(alignment: .leading) {
                                         Text("\(city.temperature)°C")
-                                            .font(.title)
+                                            .font(.title2)
                                             .bold()
                                             .foregroundColor(.white)
                                         Text(city.name)
                                             .foregroundColor(.white)
+                                            .font(.largeTitle)
                                         Text(city.date)
-                                            .font(.caption)
+                                            .font(.title3)
                                             .foregroundColor(.white)
                                     }
                                     Spacer()
-                                    Image(systemName: city.weatherIcon)
-                                        .font(.title2)
-                                        .foregroundColor(.yellow)
-                                    Text(city.weatherCondition)
-                                        .foregroundColor(.white)
+                                    VStack(alignment: .trailing){
+                                        Image(systemName: city.weatherIcon)
+                                            .font(.largeTitle)
+                                            .foregroundColor(getIconColor(for: city.weatherCondition))
+                                            .padding()
+                                        Text(city.weatherCondition.capitalized)
+                                            .foregroundColor(.white)
+                                            
+                                    }
+                                    
                                 }
                             }
                             .padding()
@@ -59,21 +59,42 @@ struct CityListView: View {
                             .listRowBackground(Color.clear)
                         }
                         .onDelete(perform: networkManager.deleteCity)
-                        .onMove(perform: networkManager.moveCity)
+                        .onMove(perform: moveCity) // Changed this line
                     }
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
                     .listStyle(.plain)
                     .navigationBarItems(leading: EditButton(), trailing:
-                        NavigationLink(destination: SearchView().environmentObject(networkManager)) {
+                        Button(action: {
+                            isSearchViewPresented = true // Show SearchView modally
+                        }) {
                             Image(systemName: "magnifyingglass")
                         }
                     )
+                    .sheet(isPresented: $isSearchViewPresented) {
+                        SearchView(presentationMode: $isSearchViewPresented) // Pass the binding
+                            .environmentObject(networkManager)
+                    }
                     Spacer()
                 }
                 .padding(.top, 20)
             }
         }
+    }
+    
+    func getIconColor(for weatherCondition: String) -> Color {
+        switch weatherCondition.lowercased() {
+        case "clear sky":
+            return .yellow
+        case "light rain", "moderate rain", "heavy intensity rain", "very heavy rain", "extreme rain", "freezing rain", "light intensity shower rain", "shower rain", "heavy intensity shower rain", "ragged shower rain":
+            return .blue
+        default:
+            return .white // For clouds or other conditions
+        }
+    }
+    
+    private func moveCity(from source: IndexSet, to destination: Int) {
+        networkManager.moveCity(from: source, to: destination)
     }
 }
 

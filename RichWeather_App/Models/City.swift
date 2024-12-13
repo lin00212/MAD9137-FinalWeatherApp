@@ -39,10 +39,10 @@ struct WeatherData: Decodable {
 struct City: Identifiable, Codable {
     let id: UUID
     let name: String
-    let temperature: Int
-    let date: String
-    let weatherCondition: String
-    let weatherIcon: String
+    var temperature: Int // Changed to var
+    var date: String // Changed to var
+    var weatherCondition: String // Changed to var
+    var weatherIcon: String // Changed to var
     var timezone: Int?
     var windSpeed: Double?
     var humidity: Int?
@@ -94,6 +94,7 @@ struct City: Identifiable, Codable {
         
         // Decode hourlyForecast
         hourlyForecast = try container.decodeIfPresent([HourlyForecast].self, forKey: .hourlyForecast)
+        
     }
 
     // Encoder function
@@ -120,5 +121,9 @@ struct City: Identifiable, Codable {
         // Encode hourlyForecast
         try container.encode(hourlyForecast, forKey: .hourlyForecast)
     }
-}
+    
+    static func == (lhs: City, rhs: City) -> Bool {
+        return lhs.id == rhs.id
+    }
 
+}

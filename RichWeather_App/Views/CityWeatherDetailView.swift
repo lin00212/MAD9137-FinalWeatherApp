@@ -124,7 +124,7 @@ struct CityWeatherDetailView: View {
                                                 .font(.subheadline)
                                             Image(systemName: hour.weatherIcon)
                                                 .font(.title3)
-                                                .foregroundColor(.yellow)
+                                                .foregroundColor(getIconColor(for: hour.weather.first?.description ?? ""))
                                             Text(hour.temperatureCelsius)
                                                 .font(.subheadline)
                                         }
@@ -153,6 +153,17 @@ struct CityWeatherDetailView: View {
                     }
                 }
             }
+        }
+    }
+    
+    func getIconColor(for weatherDescription: String) -> Color {
+        switch weatherDescription.lowercased() {
+        case "clear sky":
+            return .yellow
+        case "light rain", "moderate rain", "heavy intensity rain", "very heavy rain", "extreme rain", "freezing rain", "light intensity shower rain", "shower rain", "heavy intensity shower rain", "ragged shower rain":
+            return .blue
+        default:
+            return .white
         }
     }
 }

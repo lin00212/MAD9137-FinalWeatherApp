@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @AppStorage("refreshInterval") private var refreshInterval: RefreshInterval = .fifteenMinutes
     @AppStorage("isDarkModeEnabled") private var isDarkModeEnabled = false
+    @EnvironmentObject var networkManager: NetworkManager
     
     enum RefreshInterval: String, CaseIterable, Identifiable {
         case fiveMinutes = "5 mins"
@@ -48,6 +49,9 @@ struct SettingsView: View {
                     .cornerRadius(15)
                     .listRowBackground(Color.clear)
                     .padding()
+                    .onChange(of: refreshInterval) {
+                        networkManager.startPeriodicUpdates()
+                    }
 
                     VStack {
                         NavigationLink(destination: AboutView()) {

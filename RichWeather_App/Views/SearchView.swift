@@ -1,10 +1,3 @@
-//
-//  SearchView.swift
-//  RichWeather_App
-//
-//  Created by Eason Lin on 12/12/2024.
-//
-
 import SwiftUI
 import MapKit
 
@@ -12,7 +5,7 @@ struct SearchView: View {
     @State private var searchText = ""
     @State private var searchResults: [City] = []
     @EnvironmentObject var networkManager: NetworkManager
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @Binding var presentationMode: Bool // Accepts a Bool binding
 
     var body: some View {
         ZStack {
@@ -26,7 +19,6 @@ struct SearchView: View {
                     .background(Color(.systemGray6).opacity(0.5))
                     .cornerRadius(10)
                     .padding(.horizontal)
-                
                     .onChange(of: searchText) {
                         if !searchText.isEmpty {
                             Task {
@@ -49,7 +41,7 @@ struct SearchView: View {
                             Spacer()
                             Button(action: {
                                 Task {
-                                    await addCityToList(city: city) // Add 'city:' label
+                                    await addCityToList(city: city)
                                 }
                             }) {
                                 Image(systemName: "plus")
@@ -110,11 +102,11 @@ struct SearchView: View {
 
     func addCityToList(city: City) async {
         await networkManager.fetchWeatherForCity(cityName: city.name)
-        presentationMode.wrappedValue.dismiss()
+        presentationMode = false // Dismiss using the binding
     }
 }
 
 #Preview {
-    SearchView()
+    SearchView(presentationMode: .constant(false)) // Pass a constant binding for the preview
         .environmentObject(NetworkManager())
 }

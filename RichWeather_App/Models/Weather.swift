@@ -4,8 +4,9 @@
 //
 //  Created by Eason Lin on 12/12/2024.
 //
+
 import SwiftUI
-import CoreLocation 
+import CoreLocation
 
 struct WeatherData: Decodable {
     let name: String
@@ -48,7 +49,7 @@ struct City: Identifiable, Codable {
     var coordinate: CLLocationCoordinate2D?
     var hourlyForecast: [HourlyForecast]?
     
-    // Manually define CodingKeys to handle UUID
+    // Manually define CodingKeys to handle UUID and custom encoding/decoding
     enum CodingKeys: String, CodingKey {
             case id, name, temperature, date, weatherCondition, weatherIcon, timezone, windSpeed, humidity, coordinate, hourlyForecast
         }
@@ -90,6 +91,9 @@ struct City: Identifiable, Codable {
         } else {
             coordinate = nil
         }
+        
+        // Decode hourlyForecast
+        hourlyForecast = try container.decodeIfPresent([HourlyForecast].self, forKey: .hourlyForecast)
     }
 
     // Encoder function
@@ -112,6 +116,8 @@ struct City: Identifiable, Codable {
             coordinateDict["longitude"] = coordinate.longitude
             try container.encode(coordinateDict, forKey: .coordinate)
         }
+        
+        // Encode hourlyForecast
+        try container.encode(hourlyForecast, forKey: .hourlyForecast)
     }
-    
 }

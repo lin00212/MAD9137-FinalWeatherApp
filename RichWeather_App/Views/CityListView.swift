@@ -1,3 +1,10 @@
+//
+//  CityListView.swift
+//  RichWeather_App
+//
+//  Created by Eason Lin on 13/12/2024.
+//
+
 import SwiftUI
 
 struct CityListView: View {
@@ -68,12 +75,8 @@ struct CityListView: View {
             }
         }
     }
-
-
 }
-
 
 #Preview {
     ContentView()
 }
-

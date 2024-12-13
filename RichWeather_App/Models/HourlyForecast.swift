@@ -7,17 +7,17 @@
 
 import Foundation
 
-struct HourlyForecast: Identifiable, Decodable {
+struct HourlyForecast: Identifiable, Codable { // Changed Decodable to Codable
     let id = UUID()
     let dt: Int
     let main: MainData
     let weather: [WeatherInfo]
     
-    struct MainData: Decodable {
+    struct MainData: Codable { // Changed Decodable to Codable
         let temp: Double
     }
     
-    struct WeatherInfo: Decodable {
+    struct WeatherInfo: Codable { // Changed Decodable to Codable
         let description: String
         let icon: String
     }
@@ -46,7 +46,6 @@ struct HourlyForecast: Identifiable, Decodable {
     }
 }
 
-// This can be in the same file or separate, depending on your preference
 extension HourlyForecast {
     // Sample data for previews
     static var samples: [HourlyForecast] {
@@ -65,7 +64,7 @@ extension HourlyForecast {
                 dt: 1734112800,
                 main: MainData(temp: 24.8),
                 weather: [WeatherInfo(description: "scattered clouds", icon: "03d")]
-            ),
+            )
             // Add more sample data as needed
         ]
     }

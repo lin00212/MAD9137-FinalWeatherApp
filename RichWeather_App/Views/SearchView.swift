@@ -1,11 +1,12 @@
 //
-//  SearchCityView.swift
+//  SearchView.swift
 //  RichWeather_App
 //
 //  Created by Eason Lin on 12/12/2024.
 //
 
 import SwiftUI
+import MapKit
 
 struct SearchView: View {
     @State private var searchText = ""
@@ -83,12 +84,17 @@ struct SearchView: View {
             }
 
             let decodedResponse = try JSONDecoder().decode(WeatherData.self, from: data)
-            let city = City(name: decodedResponse.name,
-                            temperature: Int(decodedResponse.main.temp),
-                            date: Utility.getCurrentTime(timezoneOffset: decodedResponse.timezone),
-                            weatherCondition: decodedResponse.weather[0].description,
-                            weatherIcon: Utility.getIconName(for: decodedResponse.weather[0].icon),
-                            timezone: decodedResponse.timezone, hourlyForecast: []
+            let city = City(
+                name: decodedResponse.name,
+                temperature: Int(decodedResponse.main.temp),
+                date: Utility.getCurrentTime(timezoneOffset: decodedResponse.timezone),
+                weatherCondition: decodedResponse.weather.first?.description ?? "",
+                weatherIcon: Utility.getIconName(for: decodedResponse.weather.first?.icon ?? ""),
+                timezone: decodedResponse.timezone,
+                windSpeed: decodedResponse.wind.speed,
+                humidity: decodedResponse.main.humidity,
+                coordinate: CLLocationCoordinate2D(latitude: decodedResponse.coord.lat, longitude: decodedResponse.coord.lon),
+                hourlyForecast: await networkManager.fetchHourlyForecast(lat: decodedResponse.coord.lat, lon: decodedResponse.coord.lon)
             )
 
             await MainActor.run {
@@ -110,4 +116,5 @@ struct SearchView: View {
 
 #Preview {
     SearchView()
+        .environmentObject(NetworkManager())
 }

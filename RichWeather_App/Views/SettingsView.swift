@@ -1,44 +1,4 @@
-////
-////  SettingsView.swift
-////  RichWeather_App
-////
-////  Created by Eason Lin on 12/12/2024.
-////
-//
-//import SwiftUI
-//
-//struct SettingsView: View {
-//    @ObservedObject var viewModel = SettingsViewModel()
-//
-//    var body: some View {
-//        Form {
-//            Section(header: Text("Appearance")) {
-//                Toggle(isOn: $viewModel.isDarkMode) {
-//                    Text("Dark Mode")
-//                        .font(.subheadline)
-//                }
-//            }
-//            Section(header: Text("Data Refresh")) {
-//                Picker("Refresh Interval", selection: $viewModel.refreshInterval) {
-//                    ForEach(viewModel.timeIntervals, id: \.self) { interval in
-//                        Text("$$interval) minutes").tag(interval)
-//                    }
-//                }
-//                .pickerStyle(SegmentedPickerStyle())
-//            }
-//            Section(header: Text("About")) {
-//                Button("About") {
-//                    // Present About screen
-//                }
-//            }
-//        }
-//        .navigationBarTitle("Settings")
-//    }
-//}
-//
-//#Preview {
-//    SettingsView()
-//}
+
 
 
 import SwiftUI

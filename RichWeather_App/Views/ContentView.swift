@@ -1,24 +1,22 @@
-//
-//  ContentView.swift
-//  RichWeather_App
-//
-//  Created by Eason Lin on 12/12/2024.
-//
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
+        TabView {
+            CityListView()
+                .tabItem {
+                    Label("Cities", systemImage: "list.dash")
+                }
+                .tag(0)
 
-#Preview {
-    ContentView()
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
+                }
+                .tag(1)
+        }
+//        .modelContainer(for: City.self) // Add modelContainer here
+    }
 }

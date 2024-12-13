@@ -14,6 +14,8 @@ struct RichWeather_App: App {
     var body: some Scene {
         WindowGroup {
             CityListView()
+                .environmentObject(networkManager)
+                .preferredColorScheme(isDarkModeEnabled ? .dark : .light)
         }
     }
 }

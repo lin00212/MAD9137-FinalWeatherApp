@@ -88,7 +88,8 @@ struct SearchView: View {
                             date: Utility.getCurrentTime(timezoneOffset: decodedResponse.timezone),
                             weatherCondition: decodedResponse.weather[0].description,
                             weatherIcon: Utility.getIconName(for: decodedResponse.weather[0].icon),
-                            timezone: decodedResponse.timezone)
+                            timezone: decodedResponse.timezone, hourlyForecast: []
+            )
 
             await MainActor.run {
                 self.searchResults = [city] // Update search results

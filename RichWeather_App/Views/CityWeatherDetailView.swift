@@ -1,11 +1,9 @@
 import SwiftUI
 import MapKit
-import CoreLocation // Import CoreLocation
 
 struct CityWeatherDetailView: View {
     var city: City
     
-    // Computed property to determine gradient based on temperature
     var backgroundGradient: LinearGradient {
         switch city.temperature {
         case ..<10:
@@ -44,9 +42,6 @@ struct CityWeatherDetailView: View {
             if let coordinate = city.coordinate {
                 MapView(coordinate: coordinate)
                     .ignoresSafeArea()
-            } else {
-                // Placeholder or error handling if coordinates are not available
-                Color.gray // You can use a different placeholder or error view
             }
             
             // Gradient color layer based on temperature
@@ -77,7 +72,7 @@ struct CityWeatherDetailView: View {
                             Text("Wind")
                                 .font(.headline)
                             if let windSpeed = city.windSpeed {
-                                Text("$$windSpeed) m/s")
+                                Text(String(format: "%.1f m/s", windSpeed))
                                     .font(.subheadline)
                             } else {
                                 Text("N/A")
@@ -97,7 +92,7 @@ struct CityWeatherDetailView: View {
                             Text("Humidity")
                                 .font(.headline)
                             if let humidity = city.humidity {
-                                Text("$$humidity)%")
+                                Text("\(humidity)%")
                                     .font(.subheadline)
                             } else {
                                 Text("N/A")
@@ -112,40 +107,90 @@ struct CityWeatherDetailView: View {
                     }
                     .padding(.vertical, 25)
                     
-                    // Forecast Box (Placeholder for now)
-                    VStack(alignment: .leading) {
-                        Text("Forecast")
-                            .font(.title2)
-                            .bold()
-                            .padding(.bottom, 5)
-                        
-                        // Placeholder for forecast data (replace with actual data later)
-                        HStack(spacing: 20) {
-                            ForEach(0..<4) { _ in
-                                VStack {
-                                    Text("00:00")
-                                        .font(.subheadline)
-                                    Image(systemName: "cloud.sun")
-                                        .font(.title3)
-                                    Text("-99°C")
-                                        .font(.subheadline)
+                    // Forecast Box
+                    if let forecast = city.hourlyForecast {
+                        VStack(alignment: .leading) {
+                            Text("Hourly Forecast")
+                                .font(.title2)
+                                .bold()
+                                .foregroundColor(.white)
+                                .padding(.bottom, 5)
+                            
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 20) {
+                                    ForEach(forecast) { hour in
+                                        VStack {
+                                            Text(hour.time)
+                                                .font(.subheadline)
+                                            Image(systemName: hour.weatherIcon)
+                                                .font(.title3)
+                                                .foregroundColor(.yellow)
+                                            Text(hour.temperatureCelsius)
+                                                .font(.subheadline)
+                                        }
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 15)
+                                        .background(Color.black.opacity(0.5))
+                                        .cornerRadius(20)
+                                    }
                                 }
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 10)
-                                .background(Color.black.opacity(0.5))
-                                .cornerRadius(20)
+                                .padding(.horizontal)
                             }
                         }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 25)
+                        .padding(.bottom, 35)
+                    } else {
+                        VStack {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            Text("Loading Forecast...")
+                                .foregroundColor(.white)
+                                .font(.caption)
+                        }
+                        .padding(.top, 20)
                     }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 25)
-                    .padding(.bottom, 35)
                 }
             }
         }
     }
 }
 
-#Preview{
-    CityListView()
+struct CityWeatherDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        let sampleForecast = [
+            HourlyForecast(
+                dt: 1734046800,
+                main: HourlyForecast.MainData(temp: 15.0),
+                weather: [HourlyForecast.WeatherInfo(description: "Clear sky", icon: "01d")]
+            ),
+            HourlyForecast(
+                dt: 1734050400,
+                main: HourlyForecast.MainData(temp: 14.0),
+                weather: [HourlyForecast.WeatherInfo(description: "Few clouds", icon: "02d")]
+            ),
+            HourlyForecast(
+                dt: 1734054000,
+                main: HourlyForecast.MainData(temp: 13.0),
+                weather: [HourlyForecast.WeatherInfo(description: "Scattered clouds", icon: "03d")]
+            )
+        ]
+        
+        let sampleCity = City(
+            id: UUID(),
+            name: "Sample City",
+            temperature: 15,
+            date: "3 PM",
+            weatherCondition: "Clear sky",
+            weatherIcon: "sun.max.fill",
+            timezone: 0,
+            windSpeed: 5.0,
+            humidity: 60,
+            coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+            hourlyForecast: sampleForecast
+        )
+        
+        CityWeatherDetailView(city: sampleCity)
+    }
 }

@@ -46,13 +46,14 @@ struct City: Identifiable, Codable {
     var windSpeed: Double?
     var humidity: Int?
     var coordinate: CLLocationCoordinate2D?
+    var hourlyForecast: [HourlyForecast]?
     
     // Manually define CodingKeys to handle UUID
     enum CodingKeys: String, CodingKey {
-        case id, name, temperature, date, weatherCondition, weatherIcon, timezone, windSpeed, humidity, coordinate
-    }
+            case id, name, temperature, date, weatherCondition, weatherIcon, timezone, windSpeed, humidity, coordinate, hourlyForecast
+        }
 
-    init(id: UUID = UUID(), name: String, temperature: Int, date: String, weatherCondition: String, weatherIcon: String, timezone: Int? = nil, windSpeed: Double? = nil, humidity: Int? = nil, coordinate: CLLocationCoordinate2D? = nil) {
+    init(id: UUID = UUID(), name: String, temperature: Int, date: String, weatherCondition: String, weatherIcon: String, timezone: Int? = nil, windSpeed: Double? = nil, humidity: Int? = nil, coordinate: CLLocationCoordinate2D? = nil, hourlyForecast: [HourlyForecast]?) {
         self.id = id
         self.name = name
         self.temperature = temperature
@@ -63,6 +64,7 @@ struct City: Identifiable, Codable {
         self.windSpeed = windSpeed
         self.humidity = humidity
         self.coordinate = coordinate
+        self.hourlyForecast = hourlyForecast
     }
 
     // Decoder initializer
@@ -111,4 +113,5 @@ struct City: Identifiable, Codable {
             try container.encode(coordinateDict, forKey: .coordinate)
         }
     }
+    
 }

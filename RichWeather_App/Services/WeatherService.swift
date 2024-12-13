@@ -13,12 +13,32 @@ class NetworkManager: ObservableObject {
     @Published var cities: [City] = []
     let apiKey = "33e00aaafea73378ee1d6f859b0d733f"
     
+    @AppStorage("refreshInterval") private var refreshInterval: SettingsView.RefreshInterval = .fifteenMinutes
+    private var timer: Timer?
+
     init() {
         Task {
             await loadCities()
         }
+        startPeriodicUpdates()
     }
     
+    func startPeriodicUpdates() {
+        timer?.invalidate() // Invalidate any existing timer
+
+        timer = Timer.scheduledTimer(withTimeInterval: refreshInterval.timeInterval, repeats: true) { [weak self] _ in
+            Task {
+                await self?.refreshWeatherData()
+            }
+        }
+    }
+
+    func refreshWeatherData() async {
+        // Refresh data for each city
+        for city in cities {
+            await fetchWeatherForCity(cityName: city.name)
+        }
+    }
     func deleteCity(at offsets: IndexSet) {
         cities.remove(atOffsets: offsets)
         saveCities()

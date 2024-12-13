@@ -13,7 +13,7 @@ struct RichWeather_App: App {
     @AppStorage("isDarkModeEnabled") private var isDarkModeEnabled = false
     var body: some Scene {
         WindowGroup {
-            CityListView()
+            ContentView()
                 .environmentObject(networkManager)
                 .preferredColorScheme(isDarkModeEnabled ? .dark : .light)
         }
@@ -21,5 +21,5 @@ struct RichWeather_App: App {
 }
 
 #Preview{
-    CityListView()
+    ContentView()
 }
